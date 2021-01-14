@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            cursor: url('../demo/图片/20201229081141696_easyicon_net_32.ico'),auto;
+        }
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+        body{
+            background: url("https://wallpaper.infinitynewtab.com/wallpaper/1947.jpg") no-repeat ;
+            background-size: cover;
+            overflow: hidden;
+        }
+        form{
+            width: 240px;
+            height: 220px;
+            color: #ccc;
+            margin: 60px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            text-align: center;
+            opacity: 0.6;
+        }
+        input{
+            width: 200px;
+            margin-top: 10px;
+            height: 20px;
+            padding: 10px;
+            border-radius: 20px;
+            outline:none;
+            /* background-image:url('../img/对号备份.png'); */
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 90% 50%;
+        }
+        button{
+            margin-left: 10px;
+            width: 220px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 20px;
+            outline: none;
+            margin: 0 auto;
+        }
+        .p{
+            font-size: 20px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .a{
+            display: block;
+            margin-top: 140px;
+            color: #ccc;
+        }
+        span{
+            width: 30px;
+            height: 20px;
+            display: inline-block;
+            border: 1px solid #fff;
+        }
+        .pStrong{
+            margin-top: 10px;
+            display: none;
+        }
+        .active{
+            background-color: skyblue;
+        }
+        .add{
+           border:2px solid red ;
+           background-image:none;
+        }
+        .yes{
+            border: none;
+            background-image:url('../image/对号备份.png')
+        }
+    </style>
+</head>
+<body>
+    <a href="./login.html" class="a"><p class="p">如果你已经注册请点击此跳转</p></a>
+    <form>
+        <label>
+            <input type="text" class="username" placeholder="账号：">
+            
+            <input type="password" class="password" placeholder="密码：" >
+            <div class="pStrong">密码强度: <span class="active">低</span><span>中</span><span>高</span></div>
+            <input type="password" class="password2" placeholder="确认密码：">
+
+            <input type="text" class="name" placeholder="用户名：">
+        </label>
+        <div>
+        <button class="logon">立即注册</button>
+        </div>
+      </form>
+      <script src="../js/jquery.min.js"></script>
+      <script src="../js/utils.js"></script>
+      <script>
+          let index = 0
+          //给用户名添加类名
+          $('.username').on('input',function(){
+              const zhang = /^(0|86|17951)?(19[0-9]|13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/
+                if(!(zhang.test($(this).val()))){
+                   $(this).addClass('add')
+                   $(this).removeClass('yes')
+                    return
+                }else{
+                    $(this).addClass('yes')
+                   $(this).removeClass('add')
+                    index++
+                    console.log(index)
+                }
+          })
+          //给密码框添加类名
+          $('.password').on('input',function(){
+              const low = (/\d{6}/)
+              const middle = (/[a-zA-z]+/)
+              const high = (/[!@#\$%\^&\*\.]+/)
+              let count = 0
+                if(low.test($(this).val())){
+                    index++
+                    if(!($(this).val()==$('.password2').val())){
+                    $('.password2').addClass('add')
+                    $('.password2').removeClass('yes')
+                    }
+                    $(this).removeClass('add')
+                    $(this).addClass('yes')
+                    $('.pStrong').css({'display':'block'})
+                    count++
+                    if(middle.test($(this).val())){
+                        count++
+                    }
+                    if(high.test($(this).val())){
+                        count++
+                    }
+                    console.log(count)
+                    $('span').removeClass('active')
+                    $('span').eq(count-1).addClass('active')
+                }else{
+                    $(this).removeClass('yes')
+                    $(this).addClass('add')
+                    $('.pStrong').css({'display':'none'})
+                    return
+                }
+          })
+          //给确认密码添加事件
+          $('.password2').on('input',function(){
+              if($(this).val()===$('.password').val()){
+                
+                if(!($(this).val())){
+                    $(this).addClass('add')
+                    $(this).removeClass('yes')
+              }else{
+                $(this).removeClass('add')
+                $(this).addClass('yes')
+              }
+              }else{
+                $(this).addClass('add')
+                $(this).removeClass('yes')
+               
+                return
+              }
+          })
+          //给用户名添加事件
+          $('.name').on('input',function(){
+           
+            if(!($(this).val())){
+                $(this).addClass('add')
+                $(this).removeClass('yes')
+                return
+            }else{
+               $(this).removeClass('add')
+               $(this).addClass('yes')
+            }
+          })
+          //给注册添加事件
+          $('.logon').on('click',async function(e){
+            const account = $('.username').val()
+            const password  = $('.password').val()
+            const username = $('.name').val()
+            if(!account&&!password&&!username){
+                alert('输个东西好吧')
+                return
+            }
+            // console.log(username)
+            if(e.preventDefault){
+                e.preventDefault();
+            }else{
+                window.event.returnValue == false;
+            }
+                const res =  await $.post('../server/logon.php',{username:username,account:account,password:password},null,'json')
+                // console.log(res)
+                if(!(res.code)){
+                    alert('用户名存在')
+                }else{
+                    if(index==2){
+                        window.location.href = './login.html'
+                    }else{
+                        alert('请完整填写表单')
+                    }
+                }
+
+          })
+
+      </script>
+</body>
+</html>

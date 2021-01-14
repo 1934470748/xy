@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+   <script>
+         getListOne()
+    async function getListOne(){
+        var { list } = await $.get('..rver/ListOne.php',null,null,'json')
+        var str = ''
+        for(i = 0;i<list.length;i++){
+            if(i===0){
+                str += `<div class="tab">
+                        <div class="iconfont-arrow-down-big "></div><span>${ list[i].good_section }</span>
+                    </div>
+                    <ul class="List_good">
+                        <li>
+                            <a href="./GeneralDetails.html" data-id="${ list[i].id}">
+                            <img src="${ list[i].sample_img }" alt="">
+                            <span>${ list[i].good_name }</span>
+                        </a>
+                        <>`
+                continue
+            }
+            if(list[i].good_section===list[i-1].good_section){
+                str += `<li>
+                    <a href="./GeneralDetails.html" data-id="${ list[i].id}">
+                            <img src="${ list[i].sample_img }" alt="">
+                            <span>${ list[i].good_name }</span>
+                        </a>
+                    <>`
+            }else{
+                str += `</ul>
+                        <div class="tab">
+                            <div class="iconfont-arrow-down-big "></div><span>${ list[i].good_section }</span>
+                        </div>
+                        <ul class="List_good">
+                        <li>
+                        <a href="./GeneralDetails.html" data-id="${ list[i].id}">
+                            <img src="${ list[i].sample_img }" alt="">
+                            <span>${ list[i].good_name }</span>
+                        </a>
+                        <>`
+            }
+        }
+        str += '</ul>'
+        $('.main').html(str)
+        $('.main').on('click','.tab' ,function(){
+        $(this).find('div').toggleClass('iconfont-arrow-down-big').toggleClass('iconfont-arrow-up-big').toggleClass('active').parent().next().toggleClass('active')
+    })
+        $('.main').on('click','a',function(){
+            window.sessionStorage.setItem('id',this.dataset.id)
+        })
+    }
+   </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+    <header>
+       <a href="./home.html">
+        <img src="../image/g4/mistore_logo.png" alt="">
+       </a>
+    </header>
+    <main>
+        <div>
+            <div class="active deng" >账号登录</div>
+            <div class="sao">扫码登录</div>
+        </div>
+        <form>
+            <label>
+                <input type="text" class="username" placeholder="账号：">
+            </label>
+            <label>
+                <input type="text" class="password" placeholder="密码：">
+                <div class="t">密码错误</div>
+            </label>
+            <button type="submit" class="submit">登录</button>
+            <aside class="zhu">
+                <span class="logon">点击注册</span><span>忘记密码</span>
+            </aside>
+          </form> 
+    </main>
+   
+      <script src="../js/utils.js"></script>
+      <script src="../js/jquery.min.js"></script>
+    <script>
+        const uer = document.querySelector('.username')
+        const pass = document.querySelector('.password')
+        const form = document.querySelector('form')
+        const btn = document.querySelector('button')
+        const t = document.querySelector('.t')
+        form.addEventListener('submit', e => {
+         // 处理事件对象兼容
+             e = e || window.event
+            // 阻止默认行为
+            if (e.preventDefault) e.preventDefault()
+            else e.returnValue = false
+
+            const pV = pass.value
+            const uV = uer.value
+            if(!pV||!uV){
+                return alert('你能数个数字吗！')
+            }
+           ajax({
+               url:'../server/1.php',
+               method:'POST',
+               data:{account:uV,password:pV},
+               success(res){
+                   console.log(res)
+                if(res.code===0){
+                    return t.style.display = 'block'
+                }
+                setCookie('login',res.nickname,20*60*60*24)
+                let session = sessionStorage.getItem('url')
+                if(session){
+                    window.location.href = session
+                }else{
+                    window.location.href = './home.html'
+                }
+               
+               }
+           })
+        })
+        $('.logon').click(function(e){
+            if(e.preventDefault){
+                e.preventDefault();
+            }else{
+                window.event.returnValue == false;
+            }
+            // setCookie('login',)
+            window.location.href = "./logon.html"
+        })
+        console.log($('.deng'))
+        $('.deng').on('mouseover',function(){
+            // console.log('deng')
+            $(this).siblings().removeClass('active')
+            $(this).addClass('active')
+        })
+        $('.sao').on('mouseover',function(){
+            console.log('sao')
+            $(this).siblings().removeClass('active')
+            $(this).addClass('active')
+        })
+    </script>
+</body>
+</html>
